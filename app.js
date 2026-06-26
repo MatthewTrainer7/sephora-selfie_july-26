@@ -32,8 +32,11 @@ var currentSlot = -1;    // slot index currently being displayed (0–2), -1 bef
 // ── Elements ──────────────────────────────────────────────────────────────
 var mainMessageEl = document.getElementById('main-message');
 var frameEl = document.getElementById('frame');
-var selfieLayers = [document.getElementById('selfieA'), document.getElementById('selfieB')];
-var frontLayer = 0; // which selfie layer is currently shown
+var selfieLayers = [
+  document.getElementById('selfie0'),
+  document.getElementById('selfie1'),
+  document.getElementById('selfie2')
+];
 
 function show(el) { el.classList.remove('hidden'); }
 function hide(el) { el.classList.add('hidden'); }
@@ -77,18 +80,13 @@ function preload(keys) {
 function showSlot(i) {
   currentSlot = i;
   if (!imageKeys[i]) {
-    // No image for this slot (e.g. nothing approved yet) — fade both out (frame only).
-    selfieLayers[0].style.opacity = 0;
-    selfieLayers[1].style.opacity = 0;
-    return;
+    return; // no image for this slot — leave the stack as-is (frame shows through)
   }
-  // Crossfade: load the new image onto the back layer, then fade it in while the
-  // current layer fades out.
-  var back = 1 - frontLayer;
-  selfieLayers[back].src = CDN_BASE + imageKeys[i];
-  selfieLayers[back].style.opacity = 1;
-  selfieLayers[frontLayer].style.opacity = 0;
-  frontLayer = back;
+  // Each slot has its own layer, stacked above the previous (DOM order). Fade the
+  // new image in over the top; earlier images stay put underneath (no fade-out).
+  var layer = selfieLayers[i];
+  layer.src = CDN_BASE + imageKeys[i];
+  layer.style.opacity = 1;
 }
 
 function startImagePhase() {
