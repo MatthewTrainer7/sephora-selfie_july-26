@@ -45,14 +45,17 @@
   #main-message { z-index: 2; }
   #frame { z-index: 1; }
 
-  /* Approved selfie overlaid on the frame */
-  #selfie {
+  /* Approved selfie overlaid on the frame. Two stacked layers crossfade
+     between images via an opacity transition. */
+  .selfie {
     top: 148px;
     left: 151px;
     width: 769px;
     height: 1363px;
     object-fit: cover;
     z-index: 3;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
   }
 
   .hidden { display: none !important; }
@@ -61,7 +64,8 @@
 <body>
   <div id="stage">
     <img id="frame" src="user-image.png" alt="" class="hidden"/>
-    <img id="selfie" alt="" class="hidden"/>
+    <img id="selfieA" class="selfie" alt=""/>
+    <img id="selfieB" class="selfie" alt=""/>
     <img id="main-message" src="main-message.png" alt=""/>
   </div>
   <script src="app.js"></script>

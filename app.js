@@ -32,7 +32,8 @@ var currentSlot = -1;    // slot index currently being displayed (0–2), -1 bef
 // ── Elements ──────────────────────────────────────────────────────────────
 var mainMessageEl = document.getElementById('main-message');
 var frameEl = document.getElementById('frame');
-var selfieEl = document.getElementById('selfie');
+var selfieLayers = [document.getElementById('selfieA'), document.getElementById('selfieB')];
+var frontLayer = 0; // which selfie layer is currently shown
 
 function show(el) { el.classList.remove('hidden'); }
 function hide(el) { el.classList.add('hidden'); }
@@ -75,13 +76,19 @@ function preload(keys) {
 // ── Display ───────────────────────────────────────────────────────────────
 function showSlot(i) {
   currentSlot = i;
-  if (imageKeys[i]) {
-    selfieEl.src = CDN_BASE + imageKeys[i];
-    show(selfieEl);
-  } else {
-    // No image for this slot (e.g. nothing approved yet) — frame only.
-    hide(selfieEl);
+  if (!imageKeys[i]) {
+    // No image for this slot (e.g. nothing approved yet) — fade both out (frame only).
+    selfieLayers[0].style.opacity = 0;
+    selfieLayers[1].style.opacity = 0;
+    return;
   }
+  // Crossfade: load the new image onto the back layer, then fade it in while the
+  // current layer fades out.
+  var back = 1 - frontLayer;
+  selfieLayers[back].src = CDN_BASE + imageKeys[i];
+  selfieLayers[back].style.opacity = 1;
+  selfieLayers[frontLayer].style.opacity = 0;
+  frontLayer = back;
 }
 
 function startImagePhase() {
