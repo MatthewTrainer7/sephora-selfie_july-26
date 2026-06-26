@@ -85,6 +85,12 @@ function showSlot(i) {
 }
 
 function startImagePhase() {
+  // If the WebSocket couldn't connect (or nothing is approved), we have no
+  // images to show — keep main-message.png up for the whole cycle instead of
+  // switching to an empty frame.
+  if (imageKeys.length === 0) {
+    return;
+  }
   hide(mainMessageEl);
   show(frameEl);
   showSlot(0);
